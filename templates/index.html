@@ -1,0 +1,35 @@
+{% extends 'app.html' %}
+{% block content %}
+
+<style>
+  html, body {
+    height: 100%; /* Ensures the body takes up the full height of the viewport */
+    margin: 0; /* Removes default margin */
+    padding: 0; /* Removes default padding */
+  }
+
+  body {
+    background-image: url('/static/wallpaperflare.com_wallpaper (20).jpg');
+    background-size: cover; /* Ensures the image covers the entire viewport */
+    background-repeat: no-repeat; 
+    background-position: center; 
+  }
+
+  h2 {
+    color: white; 
+    text-align: center;
+    margin-top: 0;
+    padding-top: 20px;
+  }
+
+  .btn {
+    position: fixed; /* Keeps the button fixed at the bottom-right */
+    bottom: 20px; /* Distance from the bottom */
+    right: 20px; /* Distance from the right */
+  }
+</style>
+
+<h2>Home page</h2>
+<a href="/register" class="btn btn-info mt-4">Apply</a>
+
+{% endblock %}
