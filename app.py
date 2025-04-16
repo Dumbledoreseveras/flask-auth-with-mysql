@@ -12,7 +12,7 @@ import bcrypt  # pip istall bcrypt and pip show bcrypt then it will execute
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here'
 
-# Database connection
+#  Database connection
 def get_db():
     return mysql.connector.connect(
         host = 'localhost',
@@ -37,12 +37,12 @@ class RegisterForm(FlaskForm):
         db.close()
         if user:
             raise ValidationError('Email Already Exists')
-
+        
 class LoginForm(FlaskForm):
-    email = StringField("Email", validators=[DataRequired(), Email()])  # Corrected: StringField for email
-    password = PasswordField("Password", validators=[DataRequired()])  # Corrected: PasswordField for password
+    email = StringField("Email", validators=[DataRequired(), Email()])  
+    password = PasswordField("Password", validators=[DataRequired()])  
     submit = SubmitField("Login")
-
+    
 class UserForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired(), Email()])
@@ -125,8 +125,9 @@ def dashboard():
 
 @app.route('/logout')
 def logout():
-    session.pop('user_id', None)
-    flash("You have been logged out successfully.")
+    if 'user_id' in session:
+        session.pop('user_id', None)
+        flash("You have been logged out successfully.")
     return redirect(url_for('login_data'))
 
 @app.route('/users')
