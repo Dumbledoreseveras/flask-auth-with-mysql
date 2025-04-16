@@ -8,6 +8,7 @@ from wtforms import StringField, PasswordField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Email, ValidationError
 import bcrypt  # pip istall bcrypt and pip show bcrypt then it will execute
 # pip install email-validator and pip show email-validator for email validation
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here'
 
