@@ -42,7 +42,7 @@ class LoginForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired(), Email()])  
     password = PasswordField("Password", validators=[DataRequired()])  
     submit = SubmitField("Login")
-    
+
 class UserForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired(), Email()])
@@ -136,10 +136,11 @@ def list_users():
         flash("Please login first")
         return redirect(url_for('login_data'))
     
+    user_id = session['user_id']  # Get the logged-in user's ID
     db = get_db()
     cursor = db.cursor(dictionary=True)
-    query = "SELECT id, name, email FROM user"
-    cursor.execute(query)
+    query = "SELECT id, name, email FROM user WHERE id = %s"
+    cursor.execute(query, (user_id,))  # Fetch only the logged-in user's data
     users = cursor.fetchall()
     cursor.close()
     db.close()
