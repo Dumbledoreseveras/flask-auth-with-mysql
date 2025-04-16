@@ -250,5 +250,28 @@ def delete_user(user_id):
     flash("User deleted successfully")
     return redirect(url_for('list_users'))
 
+
+@app.route('/users/add', methods=['GET', 'POST'])
+def add_user():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        email = form.email.data
+        password = form.password.data
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        
+        db = get_db()
+        cursor = db.cursor()
+        query = "INSERT INTO user (name, email, password) VALUES (%s, %s, %s)"
+        cursor.execute(query, (name, email, hashed_password))
+        db.commit()
+        cursor.close()
+        db.close()
+        
+        flash("User added successfully!")
+        return redirect(url_for('list_users'))
+    
+    return render_template('add_user.html', form=form)
+
 if __name__ == '__main__':
     app.run(debug=True)
