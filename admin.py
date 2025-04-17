@@ -72,3 +72,110 @@ def admin_users():
         flash("No registered users found.")
 
     return render_template('admin_users.html', users=users)
+
+# Admin Edit User
+@admin_bp.route('/admin/users/edit/<int:user_id>', methods=['GET', 'POST'])
+def admin_edit_user(user_id):
+    if 'admin_id' not in session:
+        flash("Please log in as admin.")
+        return redirect(url_for('admin.admin_login'))
+
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    if request.method == 'POST':
+        # Get updated user details from the form
+        name = request.form['name']
+        email = request.form['email']
+        bio = request.form['bio']
+
+        # Update the user in the database
+        query = "UPDATE user SET name = %s, email = %s, bio = %s WHERE id = %s"
+        cursor.execute(query, (name, email, bio, user_id))
+        db.commit()
+        cursor.close()
+        db.close()
+
+        flash("User updated successfully.")
+        return redirect(url_for('admin.admin_users'))
+
+    # Fetch the user's current details for the edit form
+    query = "SELECT id, name, email, bio FROM user WHERE id = %s"
+    cursor.execute(query, (user_id,))
+    user = cursor.fetchone()
+    cursor.close()
+    db.close()
+
+    if not user:
+        flash("User not found.")
+        return redirect(url_for('admin.admin_users'))
+
+    return render_template('admin_edit_user.html', user=user)
+
+# Admin Delete User
+@admin_bp.route('/admin/users/delete/<int:user_id>', methods=['POST'])
+def delete_user(user_id):
+    if 'admin_id' not in session:
+        flash("Please log in as admin.")
+        return redirect(url_for('admin.admin_login'))
+
+    db = get_db()
+    cursor = db.cursor()
+
+    # Delete the user from the database
+    query = "DELETE FROM user WHERE id = %s"
+    cursor.execute(query, (user_id,))
+    db.commit()
+    cursor.close()
+    db.close()
+
+    flash("User deleted successfully.")
+    return redirect(url_for('admin.admin_users'))
+
+# Admin View User Details
+@admin_bp.route('/admin/users/view/<int:user_id>')
+def admin_view_user(user_id):
+    if 'admin_id' not in session:
+        flash("Please log in as admin.")
+        return redirect(url_for('admin.admin_login'))
+
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    # Fetch user details, including bio
+    query = "SELECT id, name, email, bio FROM user WHERE id = %s"
+    cursor.execute(query, (user_id,))
+    user = cursor.fetchone()
+    cursor.close()
+    db.close()
+
+    if not user:
+        flash("User not found.")
+        return redirect(url_for('admin.admin_users'))
+
+    return render_template('admin_view_user.html', user=user)
+
+# Admin Add New User
+@admin_bp.route('/admin/users/add', methods=['GET', 'POST'])
+def admin_add_user():
+    if 'admin_id' not in session:
+        flash("Please log in as admin.")
+        return redirect(url_for('admin.admin_login'))
+
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        password = bcrypt.hashpw(request.form['password'].encode(), bcrypt.gensalt())
+
+        db = get_db()
+        cursor = db.cursor()
+        query = "INSERT INTO user (name, email, password) VALUES (%s, %s, %s)"
+        cursor.execute(query, (name, email, password.decode()))
+        db.commit()
+        cursor.close()
+        db.close()
+
+        flash("User added successfully.")
+        return redirect(url_for('admin.admin_users'))
+
+    return render_template('admin_add_user.html')
