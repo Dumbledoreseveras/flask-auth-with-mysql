@@ -40,7 +40,7 @@ def admin_login():
         if admin and bcrypt.checkpw(password.encode(), admin['password'].encode()):
             session['admin_id'] = admin['id']
             flash("Login successful.")
-            return redirect(url_for('admin.admin_user'))
+            return redirect(url_for('admin.admin_users'))  # Corrected endpoint
         else:
             flash("Invalid username or password.")
 
@@ -62,7 +62,8 @@ def admin_users():
 
     db = get_db()
     cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT id, name, email, created_at FROM user ORDER BY created_at DESC")  # Fetch users in descending order
+    query = "SELECT id, name, email FROM user"  # Fetch all users
+    cursor.execute(query)
     users = cursor.fetchall()
     cursor.close()
     db.close()
