@@ -1,25 +1,29 @@
 from flask import Flask, render_template, redirect, url_for, session, flash, request
 # you can store information specific to a user for the duration of a session
 #url_for: is a function used to dynamically generate URLs for a specific route or endpoint in your application
-import mysql.connector 
+# import mysql.connector 
 from flask_wtf import FlaskForm #pip install flask-wtf and pip show flask-wtf then it will execute
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField
 # StringField: It is used to accept text input from the user, such as names, email addresses, or other short text data.
 from wtforms.validators import DataRequired, Email, ValidationError
 import bcrypt  # pip istall bcrypt and pip show bcrypt then it will execute
 # pip install email-validator and pip show email-validator for email validation
+from admin import admin_bp
+from db import get_db
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here'
+app.register_blueprint(admin_bp)
 
 #  Database connection
-def get_db():
-    return mysql.connector.connect(
-        host = 'localhost',
-        user = 'root',
-        password = 'asish@2002#',
-        database = 'mydatabases'
-    )
+# def get_db():
+#     return mysql.connector.connect(
+#         host = 'localhost',
+#         user = 'root',
+#         password = 'asish@2002#',
+#         database = 'mydatabases'
+#     )
 
 class RegisterForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()]) # DataRequired(): ensures that the field is not left empty. if the field is empty, the form submission will faill and generate messege
