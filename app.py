@@ -33,7 +33,7 @@ class RegisterForm(FlaskForm):
 
     def validate_email(self, field):
         db = get_db()
-        cursor = db.cursor()
+        cursor = db.cursor() # cursor in database object used to retrieve and manipulate data row by row, rather than fetching an entire result
         query = "SELECT * FROM user WHERE email = %s"
         cursor.execute(query, (field.data,))
         user = cursor.fetchone()
